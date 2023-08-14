@@ -1,0 +1,41 @@
+% input audio 
+[x,fs]=audioread('F:\audio.wav');
+N=length(x);
+% plot vs k
+k=0:N-1;
+X=fft(x,N);
+figure(1);
+plot(k,abs(X));
+% plot vs freq.
+f=(0:N-1)*fs/N;
+figure(2);
+plot(f,abs(X)/N);
+% shift zero to the center
+f=(-N/2:N/2-1)*fs/N;
+figure(3);
+plot(f,abs(fftshift(X))/N);
+% filter the audio 
+%fitlered_signal = filter(Hd, x);
+y=filter(Hd, x);
+Y=fft(y,N);
+% plot vs k
+figure(4);
+plot(k,abs(Y));
+% plot vs freq.
+f=(0:N-1)*fs/N;
+figure(5);
+plot(f,abs(Y)/N);
+% shift zero to the center
+f=(-N/2:N/2-1)*fs/N;
+figure(6);
+plot(f,abs(fftshift(Y))/N);
+% play the audio 
+fitlered_audio = 'F:\filtered.wav';
+audiowrite(fitlered_audio, y, fs);
+play_audio = audioplayer(fitlered_signal, fs);
+play(play_audio);
+% impulse response 
+impz(Hd);
+% freq. response 
+freqz(Hd);
+%--------------------------------------

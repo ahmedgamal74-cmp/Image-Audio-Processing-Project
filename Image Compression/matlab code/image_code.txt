@@ -1,0 +1,121 @@
+original_image=imread('C:\Users\user\OneDrive - Cairo University - Students\Desktop\sigProj\image1.bmp'); % to read the image
+figure('name','original image');
+imshow(original_image)
+original_image = double(original_image); % to double the image
+
+[rows_num,columns_num,layers_num] = size(original_image); % to get number of rows and columns and layers(red, green, blue)
+%-------------------------------------------------------------------------------------------------------------------------
+% display each one of the three colour component 
+p1=imread('C:\Users\user\OneDrive - Cairo University - Students\Desktop\sigProj\image1.bmp');
+figure('name','red image')
+red=p1;
+red(:,:,[2 3])=0;
+imshow(red);
+figure('name','green image')
+green=p1;
+green(:,:,[1 3])=0;
+imshow(green)
+figure('name','blue image')
+blue=p1;
+blue(:,:,[1 2])=0;
+imshow(blue)
+%-------------------------------------------------------------------------------------------------------------------------
+before_dct2=zeros(8,8); % step 1
+decompressed=zeros(rows_num,columns_num,layers_num);  % step 2
+compressed1=zeros((rows_num/8) , (columns_num/8) , 3); % step 3
+compressed2=zeros((rows_num/8)*2 , (columns_num/8)*2 , 3); % step 4
+compressed3=zeros((rows_num/8)*3 , (columns_num/8)*3 , 3); % step 5  
+compressed4=zeros((rows_num/8)*4 , (columns_num/8)*4 , 3); % step 6
+x=zeros(1,4); % step 7
+%(from step 1 to step 7 --> intilization of variables that will be used in the next phases)
+%-------------------------------------------------------------------------------------------------------------------------
+for layers=1:3  %at m=1
+    for it=1 : (rows_num/8)
+        for it2=1 : (columns_num/8)
+        before_dct=original_image((it*8-7):it*8,(it2*8-7):it2*8,layers);
+        final=zeros(8,8);
+        after_dct=dct2(before_dct);
+        compressed1(it,it2,layers)=after_dct(1,1);
+        final(1,1)=after_dct(1,1);
+        decompressed((it*8-7):(it*8),(it2*8-7):(it2*8),layers)=idct2(final);
+        end 
+    end
+end
+decompressed=uint8(floor(decompressed));
+figure('name','Decomp at M = 1');
+imshow(decompressed);
+figure('name','comp at M = 1');
+compressedf1=uint8(floor(compressed1));
+imshow(compressedf1);
+x(1)=psnr(decompressed,uint8(original_image)); % Calculating PSNR value at m=1
+for layers=1:3  % at m=2
+    for it=1 : (rows_num/8)
+        for it2=1 : (columns_num/8)
+        before_dct=original_image((it*8-7):it*8,(it2*8-7):it2*8,layers);
+        final=zeros(8,8);
+        after_dct=dct2(before_dct);
+        compressed2(it*2-1:it*2,it2*2-1:it2*2,layers)=after_dct(1:2,1:2);
+        final(1:2,1:2)=after_dct(1:2,1:2);
+        decompressed((it*8-7):(it*8),(it2*8-7):(it2*8),layers)=idct2(final);
+        end 
+    end
+end
+decompressed=uint8(floor(decompressed));
+figure('name','Decomp at M = 2');
+imshow(decompressed);
+figure('name','comp at M = 2');
+compressedf2=uint8(floor(compressed2));
+imshow(compressedf2);
+x(2)=psnr(decompressed,uint8(original_image)); %Calculating PSNR value at m=2
+for layers=1:3  % at m=3
+    for it=1 : (rows_num/8)
+        for it2=1 : (columns_num/8)
+        before_dct=original_image((it*8-7):it*8,(it2*8-7):it2*8,layers);
+        final=zeros(8,8);
+        after_dct=dct2(before_dct);
+        compressed3(it*3-2:it*3,it2*3-2:it2*3,layers)=after_dct(1:3,1:3);
+        final(1 :3,1:3)=after_dct(1:3,1:3);
+        decompressed((it*8-7):(it*8),(it2*8-7):(it2*8),layers)=idct2(final);
+        end 
+    end
+end
+decompressed=uint8(floor(decompressed));
+figure('name','Decomp at M = 3');
+imshow(decompressed);
+figure('name','comp at M = 3');
+compressedf3=uint8(floor(compressed3));
+imshow(compressedf3);
+x(3)=psnr(decompressed,uint8(original_image)); %Calculating PSNR value at m=3
+for layers=1:3   % at m=4
+    for it=1 : (rows_num/8)
+        for it2=1 : (columns_num/8)
+        before_dct=original_image((it*8-7):it*8,(it2*8-7):it2*8,layers);
+        final=zeros(8,8);
+        after_dct=dct2(before_dct);
+        compressed4(it*4-3:it*4,it2*4-3:it2*4,layers)=after_dct(1:4,1:4);
+        final(1 :4,1:4)=after_dct(1:4,1:4);
+        decompressed((it*8-7):(it*8),(it2*8-7):(it2*8),layers)=idct2(final);
+        end 
+    end
+end
+decompressed=uint8(floor(decompressed));
+figure('name','Decomp at M = 4');
+imshow(decompressed);
+figure('name','comp at M = 4');
+compressedf4=uint8(floor(compressed4));
+imshow(compressedf4);
+x(4)=psnr(decompressed,uint8(original_image)); %Calculating PSNR value at m=4
+%imwrite(uint8(compressed1),'C:\Users\user\OneDrive - Cairo University - Students\Desktop\sigProj\image1.bmp'); 
+%imwrite(uint8(compressed2),'C:\Users\user\OneDrive - Cairo University - Students\Desktop\sigProj\image1.bmp');
+%imwrite(uint8(compressed3),'C:\Users\user\OneDrive - Cairo University - Students\Desktop\sigProj\image1.bmp');
+%imwrite(uint8(compressed4),'C:\Users\user\OneDrive - Cairo University - Students\Desktop\sigProj\image1.bmp');
+figure; %Ploting PSNR continous value
+plot([1;2;3;4],x);
+title('PSNR value of decompressed image');
+xlabel('m x m');
+ylabel('PSNR');
+figure; %ploting PSNR discrite values
+stem([1,2,3,4],x);
+title('PSNR value of decompressed image');
+xlabel('m x m');
+ylabel('PSNR');
